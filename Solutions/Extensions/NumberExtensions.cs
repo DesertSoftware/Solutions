@@ -1,7 +1,7 @@
 ﻿//
-//  Copyright 2014, Desert Software Solutions Inc.
+//  Copyright 2013, Desert Software Solutions Inc.
 //    DateExtensions.cs: 
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Extensions/DateExtensions.cs
+//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Extensions/NumberExtensions.cs
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -23,21 +23,15 @@ using System.Text;
 
 namespace DesertSoftware.Solutions.Extensions
 {
-    static public class DateExtensions
+    static public class NumberExtensions
     {
-        /// <summary>
-        /// create an array of seqeuntial dates from a given startDate with a sequence length of a given number of days.
-        /// </summary>
-        /// <param name="startDate">The start date.</param>
-        /// <param name="days">The days.</param>
-        /// <returns></returns>
-        static public DateTime[] Sequence(this DateTime startDate, int days) {
-            var dates = new List<DateTime>();
+        static public int[] Sequence(this int min, int max, int step = 1) {
+            var values = new List<int>();
 
-            for (var day = 0; day < days; day++)
-                dates.Add(startDate.AddDays(day));
+            for (var value = min; value <= max; value += step)
+                values.Add(value);
 
-            return dates.ToArray();
+            return values.ToArray();
         }
     }
 }
