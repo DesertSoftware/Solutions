@@ -35,7 +35,7 @@ namespace DesertSoftware.Solutions.Extensions
             var dates = new List<DateTime>();
 
             for (var day = 0; day < days; day++)
-                dates.Add(startDate.AddDays(day));
+                dates.Add(startDate.AddDays(day).Date);
 
             return dates.ToArray();
         }

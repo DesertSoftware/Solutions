@@ -19,12 +19,12 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Globalization;
-
+using System.Xml;
 
 namespace DesertSoftware.Solutions.Extensions
 {
@@ -67,21 +67,21 @@ namespace DesertSoftware.Solutions.Extensions
                     foreach (var repeatedElement in repeatedElementGroup)
                         list.Add(ToDynamic(repeatedElement));
 
-                    properties.Add(repeatedElementGroup.Key, list);
+                    properties.Add(XmlConvert.DecodeName(repeatedElementGroup.Key), list);
                 }
 
                 foreach (var uniqueElement in uniqueElements.OrderBy(el => el.Name.LocalName))
-                    properties.Add(uniqueElement.Name.LocalName, ToDynamic(uniqueElement));
+                    properties.Add(XmlConvert.DecodeName(uniqueElement.Name.LocalName), ToDynamic(uniqueElement));
             }
 
             // Add attributes, if any
             if (element.Attributes().Any())
                 foreach (var attribute in element.Attributes())
                     if (!attribute.IsNamespaceDeclaration)
-                        properties.Add(attribute.Name.LocalName, TypedValue(attribute.Value));
+                        properties.Add(XmlConvert.DecodeName(attribute.Name.LocalName), TypedValue(attribute.Value));
 
-            if (!element.HasElements)
-                properties.Add(element.Name.LocalName, element.Value);
+            if (!element.HasElements && !string.IsNullOrWhiteSpace(element.Value))
+                properties.Add(XmlConvert.DecodeName(element.Name.LocalName), element.Value);
 
             if (element.HasElements || element.HasAttributes)
                 return item;

@@ -33,5 +33,27 @@ namespace DesertSoftware.Solutions.Extensions
 
             return values.ToArray();
         }
+
+        static public Single DefaultWhenIndeterminate(this Single value, Single defaultValue = 0) {
+            if ((System.Single.IsNaN(value)) || (System.Single.IsInfinity(value)) || (value <= System.Single.Epsilon))
+                return defaultValue;
+
+            return value;
+        }
+
+        static public bool Between(this double value, int start, int end, bool inclusive = true) {
+            if (inclusive)
+                return value >= start && value <= end;
+
+            return value > start && value < end;
+        }
+
+        static public bool In(this int value, params int[] values) {
+            foreach (var v in values)
+                if (value == v)
+                    return true;
+
+            return false;
+        }
     }
 }
