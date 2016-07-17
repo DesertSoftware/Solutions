@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentMigrator">
+      <HintPath>packages\FluentMigrator.1.6.1\lib\40\FluentMigrator.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentMigrator.Runner">
+      <HintPath>packages\FluentMigrator.Runner.1.6.1\lib\40\FluentMigrator.Runner.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,12 +46,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Generic\ListDataReader.cs" />
+    <Compile Include="Data\Migrations\ReleaseMigrationAttribute.cs" />
+    <Compile Include="Data\Migrations\Runners\MigrationRunner.cs" />
     <Compile Include="Extensions\DateExtensions.cs" />
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\XElementExtensions.cs" />
+    <Compile Include="Extensions\XmlLinqExtensions.cs" />
     <Compile Include="Formatters\DynamicXmlFormatter.cs" />
+    <Compile Include="IO\CsvReader.cs" />
+    <Compile Include="Numeral.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecretConsole.cs" />
+    <Compile Include="Windows\API\Kernel32.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

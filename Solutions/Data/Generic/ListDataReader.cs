@@ -47,7 +47,7 @@ namespace DesertSoftware.Solutions.Data.Generic
         /// <param name="s">The string.</param>
         /// <param name="values">The values.</param>
         /// <returns></returns>
-        static public bool In(this string s, params string[] values) {
+        static internal bool In(this string s, params string[] values) {
             if (values == null)
                 return false;
 
