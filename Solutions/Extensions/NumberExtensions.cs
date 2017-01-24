@@ -25,6 +25,13 @@ namespace DesertSoftware.Solutions.Extensions
 {
     static public class NumberExtensions
     {
+        /// <summary>
+        /// Returns a sequence of numbers up to the specified maximum.
+        /// </summary>
+        /// <param name="min">The minimum.</param>
+        /// <param name="max">The maximum.</param>
+        /// <param name="step">The step.</param>
+        /// <returns></returns>
         static public int[] Sequence(this int min, int max, int step = 1) {
             var values = new List<int>();
 
@@ -34,6 +41,12 @@ namespace DesertSoftware.Solutions.Extensions
             return values.ToArray();
         }
 
+        /// <summary>
+        /// Returns a defualt value when the specified single value is indeterminate (NaN, Inifinity, etc).
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
         static public Single DefaultWhenIndeterminate(this Single value, Single defaultValue = 0) {
             if ((System.Single.IsNaN(value)) || (System.Single.IsInfinity(value)) || (value <= System.Single.Epsilon))
                 return defaultValue;
@@ -41,6 +54,27 @@ namespace DesertSoftware.Solutions.Extensions
             return value;
         }
 
+        /// <summary>
+        /// Returns a defualt value when the specified single value is indeterminate (NaN, Inifinity, etc).
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        static public double DefaultWhenIndeterminate(this double value, double defaultValue = 0) {
+            if ((System.Double.IsNaN(value)) || (System.Double.IsInfinity(value)) || (value <= System.Double.Epsilon))
+                return defaultValue;
+
+            return value;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if the value is between the specified start and end values.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <param name="inclusive">if set to <c>true</c> [inclusive].</param>
+        /// <returns></returns>
         static public bool Between(this double value, int start, int end, bool inclusive = true) {
             if (inclusive)
                 return value >= start && value <= end;
@@ -48,6 +82,27 @@ namespace DesertSoftware.Solutions.Extensions
             return value > start && value < end;
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the value is between the specified start and end values.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <param name="inclusive">if set to <c>true</c> [inclusive].</param>
+        /// <returns></returns>
+        static public bool Between(this int value, int start, int end, bool inclusive = true) {
+            if (inclusive)
+                return value >= start && value <= end;
+
+            return value > start && value < end;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if the value is found to exist in the specified set of values
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="values">The values.</param>
+        /// <returns></returns>
         static public bool In(this int value, params int[] values) {
             foreach (var v in values)
                 if (value == v)

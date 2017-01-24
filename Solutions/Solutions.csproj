@@ -48,8 +48,10 @@
     <Compile Include="Data\Generic\ListDataReader.cs" />
     <Compile Include="Data\Migrations\ReleaseMigrationAttribute.cs" />
     <Compile Include="Data\Migrations\Runners\MigrationRunner.cs" />
+    <Compile Include="Extensions\BitExtensions.cs" />
     <Compile Include="Extensions\DateExtensions.cs" />
     <Compile Include="Extensions\NumberExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Extensions\XmlLinqExtensions.cs" />
     <Compile Include="Formatters\DynamicXmlFormatter.cs" />
