@@ -33,7 +33,7 @@ namespace DesertSoftware.Solutions.IO
         private string[] header;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CsvReader"/> class.
+        /// Initializes a new instance of the <see cref="CsvReader" /> class.
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <param name="firstLineOfData">The first line of data.</param>
@@ -66,6 +66,43 @@ namespace DesertSoftware.Solutions.IO
         /// <param name="firstLineOfData">The first line of data.</param>
         public CsvReader(Stream stream, int headerLineNumber = 0, int firstLineOfData = 0) {
             this.reader = new StreamReader(stream);
+            Initialize(headerLineNumber, firstLineOfData);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CsvReader"/> class.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="firstLineOfData">The first line of data.</param>
+        /// <param name="header">The header.</param>
+        public CsvReader(TextReader reader, int firstLineOfData, params string[] header) {
+            this.reader = reader;
+            this.header = header;
+            Initialize(-1, firstLineOfData);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CsvReader"/> class.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="header">The header.</param>
+        public CsvReader(TextReader reader, params string[] header) {
+            this.reader = reader;
+
+            if (header != null && header.Length > 0)
+                this.header = header;
+            else
+                Initialize(0, 0);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CsvReader"/> class.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="headerLineNumber">The header line number.</param>
+        /// <param name="firstLineOfData">The first line of data.</param>
+        public CsvReader(TextReader reader, int headerLineNumber = 0, int firstLineOfData = 0) {
+            this.reader = reader;
             Initialize(headerLineNumber, firstLineOfData);
         }
 
@@ -127,6 +164,9 @@ namespace DesertSoftware.Solutions.IO
             }
         }
 
+        /// <summary>
+        /// Closes this instance.
+        /// </summary>
         public void Close() {
             if (this.reader != null)
                 try {
@@ -135,10 +175,10 @@ namespace DesertSoftware.Solutions.IO
         }
 
         /// <summary>
-        /// Reads the line.
+        /// Reads the next line and returns an object consisting of the values contained in the line.
         /// </summary>
         /// <returns></returns>
-        public dynamic ReadLine() {
+        public dynamic ReadLine(bool detectDateTimeValues = true) {
             string line = this.reader.ReadLine();
 
             if (line == null)
@@ -146,7 +186,8 @@ namespace DesertSoftware.Solutions.IO
 
             // simplistic parser
             // shortcomings of this implementation; quoted commas are not ignored
-            string[] values = line.Split(",".ToArray(), StringSplitOptions.RemoveEmptyEntries);
+//            string[] values = line.Split(",".ToArray(), StringSplitOptions.None); //.RemoveEmptyEntries);
+            string[] values = line.EnumerateCsvValues().ToArray(); 
 
             var result = new ExpandoObject();
             var resultProperties = result as IDictionary<string, object>;
@@ -154,30 +195,95 @@ namespace DesertSoftware.Solutions.IO
             if (this.header != null && this.header.Length > 0) {
                 for (var index = 0; index < this.header.Length; index++)
                     if (index < values.Length)
-                        resultProperties[this.header[index]] = values[index].TypedValue();
+                        resultProperties[this.header[index]] = values[index].TypedValue(detectDateTimeValues);
 
                 return result;
             }
 
+            // no header exists, add each value as "_ColumnPos" eg. "_0"
             for (var index = 0; index < values.Length; index++)
                 resultProperties[string.Format("_{0}", index)] = values[index].TypedValue();
 
             return result;
         }
 
-        public IEnumerable<dynamic> ReadAllLines() {
+        /// <summary>
+        /// Reads all lines.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<dynamic> ReadAllLines( bool detectDateTimeValues = true) {
             dynamic line;
 
-            while ((line = ReadLine()) != null)
+            while ((line = ReadLine(detectDateTimeValues)) != null)
                 yield return line;
         }
 
-        public IEnumerable<dynamic> ReadAllLines(Func<dynamic, bool> selector) {
+        /// <summary>
+        /// Reads all lines.
+        /// </summary>
+        /// <param name="selector">The selector.</param>
+        /// <returns></returns>
+        public IEnumerable<dynamic> ReadAllLines(Func<dynamic, bool> selector, bool detectDateTimeValues = true) {
             dynamic line;
 
-            while ((line = ReadLine()) != null)
+            while ((line = ReadLine(detectDateTimeValues)) != null)
                 if (selector(line))
                     yield return line;
+        }
+
+        /// <summary>
+        /// Resolves a column index to a column name as defined in the header or anonymous.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">index;Index value must be in the range of 0 to number of columns.</exception>
+        public string ColumnName(int index) {
+            if (index < 0 || (this.header != null && index >= this.header.Length))
+                throw new ArgumentOutOfRangeException("index", "Index value must be in the range of 0 to number of columns.");
+
+            return this.header != null
+                ? this.header[index]
+                : string.Format("_{0}", index);
+        }
+
+        /// <summary>
+        /// Gets the value of the column for the specified index.
+        /// </summary>
+        /// <param name="values">The values as returned from a ReadLine operation.</param>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">values</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">index;Index value must be in the range of 0 to number of columns.</exception>
+        public dynamic ColumnValue(dynamic values, int index) {
+            if (values == null) throw new ArgumentNullException("values");
+            if (index < 0 || (this.header != null && index >= this.header.Length)) 
+                throw new ArgumentOutOfRangeException("index", "Index value must be in the range of 0 to number of columns.");
+            
+            IDictionary<string, dynamic> dictionary = values as IDictionary<string, dynamic>;
+
+            if (dictionary == null) {
+                dictionary = new Dictionary<string, dynamic>();
+
+                foreach (var property in values.GetType().GetProperties())
+                    try {
+                        dictionary[property.Name] = property.GetValue(values, null);
+                    } catch { }
+            }
+
+            if (dictionary != null) {
+                if (this.header != null) {
+                    return dictionary.ContainsKey(this.header[index])
+                        ? dictionary[this.header[index]]
+                        : null;
+                }
+
+                string name = string.Format("_{0}", index);
+                return dictionary.ContainsKey(name)
+                    ? dictionary[name]
+                    : null;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -193,6 +299,11 @@ namespace DesertSoftware.Solutions.IO
 
     static internal class CsvReaderExtensions
     {
+        /// <summary>
+        /// Trims the specified strings.
+        /// </summary>
+        /// <param name="strings">The strings.</param>
+        /// <returns></returns>
         static internal string[] Trim(this string[] strings) {
             if (strings == null)
                 return null;
@@ -203,7 +314,12 @@ namespace DesertSoftware.Solutions.IO
             return strings;
         }
 
-        static internal dynamic TypedValue(this string value) {
+        /// <summary>
+        /// Determines a value type suitable to contain the specified string value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        static internal dynamic TypedValue(this string value, bool includeDateTime = true) {
             // attempt to determine the basic value type
             int intValue = 0;
             double doubleValue = 0;
@@ -223,10 +339,90 @@ namespace DesertSoftware.Solutions.IO
             if (float.TryParse(value, out floatValue))
                 return floatValue;
 
-            if (DateTime.TryParse(value, out datetimeValue))
+            if (includeDateTime && DateTime.TryParse(value, out datetimeValue))
                 return datetimeValue;
 
             return value.Trim().Trim('"');  // trim whitespace and then trim leading/trailing quotes
+        }
+
+        static private bool In(this char ch, params char[] values) {
+            foreach (char value in values)
+                if (ch == value)
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Enumerates the CSV values contained in the specified string.
+        /// </summary>
+        /// <param name="s">The string to enumerate from.</param>
+        /// <param name="delimiters">One or more characters that delimit a value. (default ',')</param>
+        /// <returns></returns>
+        static internal IEnumerable<string> EnumerateCsvValues(this string s, params char[] delimiters) {
+
+            var inQuote = false;
+            var escapedQuote = false;
+            var value = new StringBuilder();
+
+            // ensure we have a default delimiter to work with if no delimiters specified
+            delimiters = delimiters.Length > 0 ? delimiters : new char[] { ',' };
+
+            // start of a new value begins with a delimiter, so append one for the parser to mark end of line.
+            s = string.Format("{0}{1}", s, delimiters.Length > 0 ? delimiters[0] : ','); 
+
+            // scanner: scan the line looking for delimiters and quotes. everything else is a value character
+            foreach (var character in s.Select((val, index) => new { val, index })) {
+                if (character.val.In(delimiters)) {
+
+                    // Have a delimiter character. 
+                    // We've potentially reached the start of a new value.
+                    // Determine if we are in quotes or not. If not in quotes, return the characters scanned up to this point.
+
+                    if (!inQuote) {
+                        yield return value.ToString().Trim();
+                        value.Clear();
+                    } else
+                        value.Append(character.val);
+
+                } else {
+                    if (character.val != ' ') {
+                        if (character.val == '"') {
+                            //If we've hit a quote character...
+
+                            if (character.val == '"' && inQuote) {
+                                //Does it appear to be a closing quote?
+                                if (s[character.index + 1] == character.val && !escapedQuote) {
+                                    // If the character afterwards is also a quote, this is to escape that (not a closing quote).
+                                    // Flag that we are escaped for the next character. Don't add the escaping quote.
+                                    escapedQuote = true;
+                                } else
+                                    if (escapedQuote) {
+                                        //This is an escaped quote. Add it and revert quoteIsEscaped to false.
+                                        escapedQuote = false;
+                                        value.Append(character.val);
+                                    } else {
+                                        inQuote = false;
+                                    }
+                            } else {
+                                if (!inQuote) {
+                                    inQuote = true;
+                                } else {
+                                    value.Append(character.val); //...It's a quote inside a quote.
+                                }
+                            }
+                        } else {
+                            value.Append(character.val);
+                        }
+                    } else {
+                        if (!string.IsNullOrWhiteSpace(value.ToString())) {
+                            //Append only if not new cell
+                            value.Append(character.val);
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

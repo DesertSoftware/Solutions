@@ -23,7 +23,10 @@ using System.Text;
 
 namespace DesertSoftware.Solutions.Extensions
 {
-    public static class StringExtensions
+    /// <summary>
+    /// Depends on <see cref="DesertSoftware.Solutons.Extensions.CharExtensions"/>
+    /// </summary>
+    static public class StringExtensions
     {
         /// <summary>
         /// Removes all leading and trailing white space character from each string in the array
@@ -126,6 +129,14 @@ namespace DesertSoftware.Solutions.Extensions
             return false;
         }
 
+        /// <summary>
+        /// returns true if any one of the values equals the string using the specified comparison function to determine equality
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="comparison"></param>
+        /// <returns>
+        ///   <c>true</c> if the specified comparison is in; otherwise, <c>false</c>.
+        /// </returns>
         static public bool IsIn(this string s, Func<string, bool> comparison) {
             if (s == null || comparison == null)
                 return false;
@@ -176,5 +187,227 @@ namespace DesertSoftware.Solutions.Extensions
             return true;
         }
 
+        /// <summary>
+        /// Determines whether the beginning of this string instance matches any of the specified strings 
+        /// ignoring case.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public bool IsPrefixedWith(this string s, params string[] values) {
+            return IsPrefixedWith(s, StringComparison.CurrentCultureIgnoreCase, values);
+        }
+
+        /// <summary>
+        /// Determines whether the beginning of this string instance matches any of the specified strings when
+        /// compared using the specified comparison option.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="comparison"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public bool IsPrefixedWith(this string s, StringComparison comparison, params string[] values) {
+            if (s == null || values == null)
+                return false;
+
+            foreach (var value in values)
+                if (s.StartsWith(value, comparison))
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the beginning of this string instance matches any of the specified strings ignoring
+        /// case and returns the specified string that matched. An empty string is returned if none of the 
+        /// specified strings were found to be a match.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public string PrefixOf(this string s, params string[] values) {
+            return PrefixOf(s, StringComparison.CurrentCultureIgnoreCase, values);
+        }
+
+        /// <summary>
+        /// Determines whether the beginning of this string instance matches any of the specified strings when
+        /// compared using the specified comparison option and returns the specified string that matched. An
+        /// empty string is returned if none of the specified strings were found to be a match.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="comparison"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public string PrefixOf(this string s, StringComparison comparison, params string[] values) {
+            if (s == null || values == null)
+                return "";
+
+            foreach (var value in values)
+                if (s.StartsWith(value, comparison))
+                    return value;
+
+            return "";
+        }
+
+        /// <summary>
+        /// Determines whether the end of this string instance matches any of the specified strings 
+        /// ignoring case.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public bool IsSuffixedWith(this string s, params string[] values) {
+            return IsSuffixedWith(s, StringComparison.CurrentCultureIgnoreCase, values);
+        }
+
+        /// <summary>
+        /// Determines whether the end of this string instance matches any of the specified strings when
+        /// compared using the specified comparison option.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="comparison"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public bool IsSuffixedWith(this string s, StringComparison comparison, params string[] values) {
+            if (s == null || values == null)
+                return false;
+
+            foreach (var value in values)
+                if (s.EndsWith(value, comparison))
+                    return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the end of this string instance matches any of the specified strings ignoring
+        /// case and returns the specified string that matched. An empty string is returned if none of the 
+        /// specified strings were found to be a match.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public string SuffixOf(this string s, params string[] values) {
+            return SuffixOf(s, StringComparison.CurrentCultureIgnoreCase, values);
+        }
+
+        /// <summary>
+        /// Determines whether the end of this string instance matches any of the specified strings when
+        /// compared using the specified comparison option and returns the specified string that matched. An
+        /// empty string is returned if none of the specified strings were found to be a match.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="comparison"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        static public string SuffixOf(this string s, StringComparison comparison, string[] values) {
+            if (s == null || values == null)
+                return "";
+
+            foreach(var value in values) 
+                if (s.EndsWith(value, comparison))
+                    return value;
+
+            return "";
+        }
+
+        /// <summary>
+        /// Returns an array of type T of a comma seperated string of values.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        static public T[] ToArray<T>(this string s) {
+            List<T> values = new List<T>();
+
+            foreach (var value in (s ?? "").Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+                values.Add((T)Convert.ChangeType(value, typeof(T)));
+
+            return values.ToArray();
+        }
+
+        /// <summary>
+        /// Returns the first set of numeric characters found in the string.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        static public string ToNumeric(this string s) {
+            char prev = ' ';        // lookback character
+            bool scanning = true;   // true until end of string or first digit found
+            StringBuilder sb = new StringBuilder();
+
+            // harvest first set of numeric digits with periods and commas from the string
+            foreach (var ch in (s ?? "")) {
+                if (scanning && ch.In("1234567890"))
+                    scanning = false;
+
+                if (!scanning && ch.In("1234567890.,")) {
+                    // if number is signed, append the sign first
+                    if (prev == '-')
+                        sb.Append(prev);
+
+                    sb.Append(ch);
+                } else
+                    break;
+
+                prev = ch;
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Determines whether the specified string is a whole or decimal numeric value.
+        /// </summary>
+        /// <param name="s">The string to evaluate.</param>
+        /// <returns></returns>
+        static public bool IsNumeric(this string s) {
+            double value;
+
+            return double.TryParse(s, out value);
+        }
+
+        /// <summary>
+        /// Returns the titlecase (ProperCase) value of the string.
+        /// </summary>
+        /// <param name="s">The string.</param>
+        /// <returns></returns>
+        static public string ToTitleCase(this string s) {
+            return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(s);
+        }
+
+        /// <summary>
+        /// Returns the specified string with all non-printable ASCII characters removed.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        static public string ToAscii(this string s) {
+            using (System.IO.StringWriter writer = new System.IO.StringWriter()) {
+                foreach (char c in s)
+                    if (c >= '\x20' && c <= '\x7e')
+                        writer.Write(c);
+
+                return writer.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Returns the specified string with all markup tags (such as "<html></html>") removed.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        static public string TrimMarkup(this string s) {
+            return System.Text.RegularExpressions.Regex.Replace(s ?? "", @"<.*?>", "");
+        }
+
+        /// <summary>
+        /// Replaces the format item in the string with the string representation of a corresponding object parameter.
+        /// </summary>
+        /// <param name="s">The string format.</param>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
+        static public string Format(this string s, params object[] args) {
+            return string.Format(s, args);
+        }
     }
 }

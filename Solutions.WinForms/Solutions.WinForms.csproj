@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B23B7C67-A7F4-44BA-B94E-83E4FE6F71C1}</ProjectGuid>
+    <ProjectGuid>{49D5BB81-5DA8-40B0-9271-D036D97DB4CF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DesertSoftware.Solutions</RootNamespace>
-    <AssemblyName>Solutions</AssemblyName>
+    <RootNamespace>DesertSoftware.Solutions.WinForms</RootNamespace>
+    <AssemblyName>Solutions.WinForms</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,14 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentMigrator">
-      <HintPath>packages\FluentMigrator.1.6.1\lib\40\FluentMigrator.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentMigrator.Runner">
-      <HintPath>packages\FluentMigrator.Runner.1.6.1\lib\40\FluentMigrator.Runner.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,40 +41,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\DataSource.cs" />
-    <Compile Include="Anonymous\Loggers.cs" />
-    <Compile Include="Data\Generic\ListDataReader.cs" />
-    <Compile Include="Data\Migrations\ReleaseMigrationAttribute.cs" />
-    <Compile Include="Data\Migrations\Runners\MigrationRunner.cs" />
-    <Compile Include="Dynamix\ValueBag.cs" />
-    <Compile Include="Extensions\ActionExtensions.cs" />
-    <Compile Include="Extensions\ArrayExtensions.cs" />
-    <Compile Include="Extensions\ArrayMath.cs" />
-    <Compile Include="Extensions\BitExtensions.cs" />
-    <Compile Include="Extensions\BoolExtensions.cs" />
-    <Compile Include="Extensions\CharExtensions.cs" />
-    <Compile Include="Extensions\DapperQueryExtensions.cs" />
-    <Compile Include="Extensions\DateExtensions.cs" />
-    <Compile Include="Extensions\NumberExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Extensions\XElementExtensions.cs" />
-    <Compile Include="Extensions\XmlLinqExtensions.cs" />
-    <Compile Include="Formatters\ArrayFormatter.cs" />
-    <Compile Include="Formatters\DynamicXmlFormatter.cs" />
-    <Compile Include="IO\CsvReader.cs" />
-    <Compile Include="IO\CsvWriter.cs" />
-    <Compile Include="IO\KeyValuePairReader.cs" />
-    <Compile Include="Security\MD5CheckSum.cs" />
-    <Compile Include="Numeral.cs" />
+    <Compile Include="MessageDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MessageDialog.Designer.cs">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SecretConsole.cs" />
-    <Compile Include="VersionInfo.cs" />
-    <Compile Include="Windows\API\Kernel32.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <EmbeddedResource Include="MessageDialog.resx">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

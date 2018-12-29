@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B23B7C67-A7F4-44BA-B94E-83E4FE6F71C1}</ProjectGuid>
+    <ProjectGuid>{1625AFFF-915B-4422-8450-23099C5BAC15}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DesertSoftware.Solutions</RootNamespace>
-    <AssemblyName>Solutions</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>Solutions.Service</RootNamespace>
+    <AssemblyName>Solutions.Service</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,16 +30,25 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentMigrator">
-      <HintPath>packages\FluentMigrator.1.6.1\lib\40\FluentMigrator.dll</HintPath>
+    <Reference Include="Gel, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Solutions\packages\Gel.1.0.1.0\lib\net35\Gel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="FluentMigrator.Runner">
-      <HintPath>packages\FluentMigrator.Runner.1.6.1\lib\40\FluentMigrator.Runner.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\Solutions\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NCrontab, Version=3.2.20120.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Solutions\packages\ncrontab.3.3.0\lib\net35\NCrontab.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,40 +56,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\DataSource.cs" />
-    <Compile Include="Anonymous\Loggers.cs" />
-    <Compile Include="Data\Generic\ListDataReader.cs" />
-    <Compile Include="Data\Migrations\ReleaseMigrationAttribute.cs" />
-    <Compile Include="Data\Migrations\Runners\MigrationRunner.cs" />
-    <Compile Include="Dynamix\ValueBag.cs" />
-    <Compile Include="Extensions\ActionExtensions.cs" />
-    <Compile Include="Extensions\ArrayExtensions.cs" />
-    <Compile Include="Extensions\ArrayMath.cs" />
-    <Compile Include="Extensions\BitExtensions.cs" />
-    <Compile Include="Extensions\BoolExtensions.cs" />
-    <Compile Include="Extensions\CharExtensions.cs" />
-    <Compile Include="Extensions\DapperQueryExtensions.cs" />
-    <Compile Include="Extensions\DateExtensions.cs" />
-    <Compile Include="Extensions\NumberExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Extensions\XElementExtensions.cs" />
-    <Compile Include="Extensions\XmlLinqExtensions.cs" />
-    <Compile Include="Formatters\ArrayFormatter.cs" />
-    <Compile Include="Formatters\DynamicXmlFormatter.cs" />
-    <Compile Include="IO\CsvReader.cs" />
-    <Compile Include="IO\CsvWriter.cs" />
-    <Compile Include="IO\KeyValuePairReader.cs" />
-    <Compile Include="Security\MD5CheckSum.cs" />
-    <Compile Include="Numeral.cs" />
+    <Compile Include="Cron\CronDaemon.cs" />
+    <Compile Include="Cron\CronSchedule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SecretConsole.cs" />
-    <Compile Include="VersionInfo.cs" />
-    <Compile Include="Windows\API\Kernel32.cs" />
+    <Compile Include="ServiceKit.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

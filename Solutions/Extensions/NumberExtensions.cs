@@ -1,6 +1,6 @@
 ﻿//
-//  Copyright 2013, Desert Software Solutions Inc.
-//    DateExtensions.cs: 
+//  Copyright 2013-2017, Desert Software Solutions Inc.
+//    NumberExtensions.cs: 
 //      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Extensions/NumberExtensions.cs
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,7 +42,7 @@ namespace DesertSoftware.Solutions.Extensions
         }
 
         /// <summary>
-        /// Returns a defualt value when the specified single value is indeterminate (NaN, Inifinity, etc).
+        /// Returns a default value when the specified single value is indeterminate (NaN, Inifinity, etc).
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="defaultValue">The default value.</param>
@@ -55,7 +55,7 @@ namespace DesertSoftware.Solutions.Extensions
         }
 
         /// <summary>
-        /// Returns a defualt value when the specified single value is indeterminate (NaN, Inifinity, etc).
+        /// Returns a default value when the specified single value is indeterminate (NaN, Inifinity, etc).
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="defaultValue">The default value.</param>
@@ -98,6 +98,21 @@ namespace DesertSoftware.Solutions.Extensions
         }
 
         /// <summary>
+        /// Returns <c>true</c> if the value is between the specified start and end values.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <param name="inclusive">if set to <c>true</c> [inclusive].</param>
+        /// <returns></returns>
+        static public bool Between(this long value, long start, long end, bool inclusive = true) {
+            if (inclusive)
+                return value >= start && value <= end;
+
+            return value > start && value < end;
+        }
+
+        /// <summary>
         /// Returns <c>true</c> if the value is found to exist in the specified set of values
         /// </summary>
         /// <param name="value">The value.</param>
@@ -110,5 +125,119 @@ namespace DesertSoftware.Solutions.Extensions
 
             return false;
         }
+
+        /// <summary>
+        /// Returns the numeric value of a binary string encoded from right to left (bit 0 is rightmost character).
+        /// </summary>
+        /// <param name="s">The binary string.</param>
+        /// <returns></returns>
+        static public T BinaryNumber<T>(this string s) {
+            ulong result = 0;
+            ulong powerOfTwo = 0;
+
+            // ensure we are dealing with non null string with a maximum length of 64 characters (bits)
+            s = (s ?? "").Length > 64 ? s.Substring(0, 64) : (s ?? "");
+
+            // convert right to left bit encoded string.
+            foreach (char ch in s.Reverse()) {
+                powerOfTwo = powerOfTwo != 0 ? powerOfTwo * 2 : 1;
+                result = powerOfTwo * (ulong)Math.Min(Convert.ToInt32((ch == ' ' ? '0' : ch).ToString()), 1);  // ensure we only deal with 0 and 1 (interpret spaces as zero)
+            }
+
+            return (T)Convert.ChangeType(result, typeof(T));
+        }
+
+        /// <summary>
+        /// Returns a single precision floating point numeric value from four bytes in the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <param name="startIndex">The start index. (default 0)</param>
+        /// <param name="length">The number of bytes to convert. (default and max value is four)</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">startIndex</exception>
+        static public Single ToSingle(this byte[] bytes, int startIndex = 0, int length = 4) {
+            if (bytes == null)
+                return 0;
+
+            if (startIndex >= bytes.Length) throw new ArgumentOutOfRangeException("startIndex");
+            byte[] value = new byte[4] { 0, 0, 0, 0 };
+            
+            // verify we have enough source bytes to fulfill the length (maximum of four bytes)
+            length = Math.Min((bytes.Length - startIndex) - length >= length ? length : bytes.Length - startIndex, 4);
+
+            // copy the requested byte values to be converted into the value array right justified
+            Array.Copy(bytes, startIndex, value, 4 - length, length);
+            return System.BitConverter.ToSingle(value, 0).DefaultWhenIndeterminate(0);
+        }
+
+        /// <summary>
+        /// Returns a 32 bit unsigned integer from four bytes in the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <param name="length">The number of bytes to convert. (default and max value is four)</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">startIndex</exception>
+        static public UInt32 ToUInt32(this byte[] bytes, int startIndex = 0, int length = 4) {
+            if (bytes == null)
+                return 0;
+
+            if (startIndex >= bytes.Length) throw new ArgumentOutOfRangeException("startIndex");
+            byte[] value = new byte[4] { 0, 0, 0, 0 };
+
+            // verify we have enough source bytes to fulfill the length (maximum of four bytes)
+            length = Math.Min((bytes.Length - startIndex) - length >= length ? length : bytes.Length - startIndex, 4);
+
+            // copy the requested byte values to be converted into the value array right justified
+            Array.Copy(bytes, startIndex, value, 4 - length, length);
+            return System.BitConverter.ToUInt32(value, 0);
+        }
+
+        /// <summary>
+        /// Returns a 32 bit signed integer from four bytes in the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <param name="length">The number of bytes to convert. (default and max value is four)</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">startIndex</exception>
+        static public Int32 ToInt32(this byte[] bytes, int startIndex = 0, int length = 4) {
+            if (bytes == null)
+                return 0;
+
+            if (startIndex >= bytes.Length) throw new ArgumentOutOfRangeException("startIndex");
+            byte[] value = new byte[4] { 0, 0, 0, 0 };
+
+            // verify we have enough source bytes to fulfill the length (maximum of four bytes)
+            length = Math.Min((bytes.Length - startIndex) - length >= length ? length : bytes.Length - startIndex, 4);
+
+            // copy the requested byte values to be converted into the value array right justified
+            Array.Copy(bytes, startIndex, value, 4 - length, length);
+            return System.BitConverter.ToInt32(value, 0);
+        }
+
+        /// <summary>
+        /// Returns a 16 bit signed integer from two bytes in the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <param name="length">The number of bytes to convert. (default and max value is two)</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">startIndex</exception>
+        static public Int16 ToInt16(this byte[] bytes, int startIndex = 0, int length = 2) {
+            if (bytes == null)
+                return 0;
+
+            if (startIndex >= bytes.Length) throw new ArgumentOutOfRangeException("startIndex");
+            byte[] value = new byte[2] { 0, 0 };
+
+            // verify we have enough source bytes to fulfill the length (maximum of two bytes)
+            length = Math.Min((bytes.Length - startIndex) - length >= length ? length : bytes.Length - startIndex, 2);
+
+            // copy the requested byte values to be converted into the value array right justified
+            Array.Copy(bytes, startIndex, value, 2 - length, length);
+            return System.BitConverter.ToInt16(value, 0);
+        }
+
     }
 }
