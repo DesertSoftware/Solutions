@@ -1,5 +1,5 @@
 ﻿//
-//  Copyright 2014, Desert Software Solutions Inc.
+//  Copyright 2018, Desert Software Solutions Inc.
 //    Loggers.cs: 
 //      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Anonymous/Loggers.cs
 //
@@ -52,8 +52,13 @@ namespace DesertSoftware.Solutions.Anonymous
 
             protected StringBuilder s = new StringBuilder();
 
-            protected string SeverityText(int severity) {
-
+            /// <summary>
+            /// Returns the textual representation of the specified severity suitable for logging/display.
+            /// Override this method to modify the severity text written to the logger.
+            /// </summary>
+            /// <param name="severity">The severity.</param>
+            /// <returns></returns>
+            protected virtual string SeverityToText(int severity) {
                 switch (severity) {
                     case DEBUG: return "DEBUG ";
                     case INFO: return "INFO  ";
@@ -70,7 +75,47 @@ namespace DesertSoftware.Solutions.Anonymous
             /// <param name="severity">The severity.</param>
             /// <param name="message">The message.</param>
             public virtual void Log(int severity, string message) {
-                this.s.AppendFormat("{0} {1}\n", SeverityText(severity), message);
+                this.s.AppendFormat("{0} {1}\n", SeverityToText(severity), message);
+            }
+
+            /// <summary>
+            /// Logs the specified message with a DEBUG severity.
+            /// </summary>
+            /// <param name="message">The message.</param>
+            public void Debug(string message) {
+                Log(DEBUG, message);
+            }
+
+            /// <summary>
+            /// Logs the specified message with an INFO severity.
+            /// </summary>
+            /// <param name="message">The message.</param>
+            public void Info(string message) {
+                Log(INFO, message);
+            }
+
+            /// <summary>
+            /// Logs the specified message with a WARN severity.
+            /// </summary>
+            /// <param name="message">The message.</param>
+            public void Warn(string message) {
+                Log(WARN, message);
+            }
+
+            /// <summary>
+            /// Logs the specified message with an ERROR severity.
+            /// </summary>
+            /// <param name="message">The message.</param>
+            public void Error(string message) {
+                Log(ERROR, message);
+            }
+
+            /// <summary>
+            /// Logs the specified message with a FATAL severity.
+            /// </summary>
+            /// <param name="message">The message.</param>
+            public void Fatal(string message) {
+                Log(FATAL, message);
             }
 
             /// <summary>
@@ -91,12 +136,28 @@ namespace DesertSoftware.Solutions.Anonymous
         public class HtmlListLogger : StringLogger
         {
             /// <summary>
+            /// Returns the CSS class of the specified severity.
+            /// </summary>
+            /// <param name="severity">The severity.</param>
+            /// <returns></returns>
+            protected string SeverityClass(int severity) {
+                switch (severity) {
+                    case DEBUG: return "debug";
+                    case INFO: return "info";
+                    case WARN: return "warn";
+                    case ERROR: return "error";
+                    case FATAL: return "fatal";
+                    default: return severity.ToString();
+                }
+            }
+
+            /// <summary>
             /// Logs the specified message with the specified severity.
             /// </summary>
             /// <param name="severity">The severity.</param>
             /// <param name="message">The message.</param>
             public override void Log(int severity, string message) {
-                base.s.AppendFormat("<li class='log-{0}'>{1} {2}</li>", SeverityText(severity).ToLower(), SeverityText(severity), message);
+                base.s.AppendFormat("<li class='log-{0}'>{1} {2}</li>", SeverityClass(severity).Trim().ToLower(), SeverityToText(severity), message);
             }
 
             /// <summary>

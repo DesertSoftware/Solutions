@@ -1,5 +1,5 @@
 ﻿//
-//  Copyright 2013, Desert Software Solutions Inc.
+//  Copyright 2013-2019, Desert Software Solutions Inc.
 //    ArrayExtensions.cs:
 //      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Extensions/ArrayExtensions.cs
 //
@@ -321,6 +321,17 @@ namespace DesertSoftware.Solutions.Extensions
             }
 
             return source;
+        }
+
+        /// <summary>
+        /// Determines whether the array is null or empty.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified array is null or empty; otherwise, <c>false</c>.
+        /// </returns>
+        static public bool IsNullOrEmpty(this Array array) {
+            return array == null || array.Length == 0;
         }
     }
 }

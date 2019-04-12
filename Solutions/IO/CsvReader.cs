@@ -327,18 +327,23 @@ namespace DesertSoftware.Solutions.IO
             float floatValue = 0;
             DateTime datetimeValue = DateTime.MinValue;
 
+            // integers
             if (int.TryParse(value, out intValue))
                 return intValue;
 
+            // doubles
             if (double.TryParse(value, out doubleValue))
                 return doubleValue;
 
+            // decimals
             if (decimal.TryParse(value, out decimalValue))
                 return decimalValue;
 
+            // floats
             if (float.TryParse(value, out floatValue))
                 return floatValue;
 
+            // datetimes
             if (includeDateTime && DateTime.TryParse(value, out datetimeValue))
                 return datetimeValue;
 

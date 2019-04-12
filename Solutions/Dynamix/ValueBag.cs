@@ -42,6 +42,15 @@ namespace DesertSoftware.Solutions.Dynamix
             this.readOnlyDictionary = (source as IDictionary<string, dynamic>) == null;
         }
 
+        /// <summary>
+        /// Returns an IDictionary interface of the specified value bag
+        /// </summary>
+        /// <param name="bag">The value bag</param>
+        /// <returns></returns>
+        static public IDictionary<string, dynamic> ToDictionary(ValueBag bag) {
+            return bag.valueDictionary;
+        }
+
         // returns the properties of an instance in dictionary form
         static private IDictionary<string, dynamic> GetDictionary(dynamic d) {
             if (d == null)
@@ -115,6 +124,68 @@ namespace DesertSoftware.Solutions.Dynamix
 
             return null;
 
+        }
+
+        /// <summary>
+        /// Gets or sets the value at the specified index.
+        /// </summary>
+        /// <value>
+        /// The value.
+        /// </value>
+        /// <param name="index">The index/field name to get or set.</param>
+        /// <returns></returns>
+        public dynamic this[string index] {
+            get { return GetValue(index); }
+            set { SetValue(index, value); }
+        }
+
+        /// <summary>
+        /// Determines whether the value bag contains an element with the specified key.
+        /// </summary>
+        /// <param name="key">The key to locate.</param>
+        /// <returns>
+        ///   <c>true</c> if the value bag contains the specified key; otherwise, <c>false</c>.
+        /// </returns>
+        public bool ContainsKey(string key) {
+            // get the fieldnames
+            int index = -1;
+            IDictionary<string, dynamic> values = this.valueDictionary;
+            string[] fields = key.Trim().Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            while (++index < fields.Length - 1 && values != null)
+                if (values != null)
+                    try {
+                        values = GetDictionary(values
+                            .Where((kv) => kv.Key.Equals(fields[index], StringComparison.CurrentCultureIgnoreCase))
+                            // accommodate indexed fields eg.  `items[0], Items[0].Details, etc`
+                            .Select((kv) => { return fields[index].Contains("[") ? kv.Value[IndexNumber(fields[index])] : kv.Value; })
+                            .FirstOrDefault());
+                    } catch (ArgumentOutOfRangeException) {
+                        // Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
+                        return false;
+                    } catch (Exception) {
+                        return false;
+                        // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
+                    }
+
+            if (values == null)
+                return false;
+
+            try {
+                // values[fields[index]] is case sensitive
+                // search for the source value in a case insensitive fashion
+                return values
+                    .Where((kv) => kv.Key.Equals(fields[index], StringComparison.CurrentCultureIgnoreCase))
+                    .Select((kv) => true)
+                    .FirstOrDefault();
+
+            } catch (ArgumentOutOfRangeException) {
+                // Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
+            } catch (Exception) {
+                // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
+            }
+
+            return false;
         }
 
         /// <summary>
