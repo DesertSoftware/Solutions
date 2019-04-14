@@ -214,7 +214,7 @@ namespace DesertSoftware.Solutions.Extensions
         /// <param name="exception">The exception.</param>
         /// <param name="message">The message.</param>
         static public void Fatal(this Action<int, string> action, Exception exception, string message) {
-            action(DEBUG, string.Format("{0} ({1})",  message, exception.ToString()));
+            action(FATAL, string.Format("{0} ({1})",  message, exception.ToString()));
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace DesertSoftware.Solutions.Extensions
         /// <param name="format">The format.</param>
         /// <param name="args">The arguments.</param>
         static public void Fatal(this Action<int, string> action, string format, params object[] args) {
-            action(DEBUG, string.Format(format, args));
+            action(FATAL, string.Format(format, args));
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace DesertSoftware.Solutions.Extensions
         /// <param name="format">The format.</param>
         /// <param name="args">The arguments.</param>
         static public void Fatal(this Action<int, string> action, Exception exception, string format, object[] args) {
-            action(DEBUG, string.Format("{0} ({1})", string.Format(format, args), exception.ToString()));
+            action(FATAL, string.Format("{0} ({1})", string.Format(format, args), exception.ToString()));
         }
     }
 }
