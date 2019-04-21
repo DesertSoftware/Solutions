@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solutions.WinForms", "..\So
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solutions.Data.Migrations", "..\Solutions.Data.Migrations\Solutions.Data.Migrations.csproj", "{FB21D0F9-8894-484F-A5B9-2FE54C40CF20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solutions.Data", "..\Solutions.Data\Solutions.Data.csproj", "{6D7882C5-56CD-421A-B5F4-A3548CE11AA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solutions.Experimental", "Solutions.Experimental\Solutions.Experimental.csproj", "{294EF557-62E8-4E1F-A37B-D4520B86FB0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{FB21D0F9-8894-484F-A5B9-2FE54C40CF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB21D0F9-8894-484F-A5B9-2FE54C40CF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB21D0F9-8894-484F-A5B9-2FE54C40CF20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D7882C5-56CD-421A-B5F4-A3548CE11AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D7882C5-56CD-421A-B5F4-A3548CE11AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D7882C5-56CD-421A-B5F4-A3548CE11AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D7882C5-56CD-421A-B5F4-A3548CE11AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{294EF557-62E8-4E1F-A37B-D4520B86FB0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{294EF557-62E8-4E1F-A37B-D4520B86FB0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{294EF557-62E8-4E1F-A37B-D4520B86FB0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{294EF557-62E8-4E1F-A37B-D4520B86FB0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

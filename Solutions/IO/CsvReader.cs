@@ -186,8 +186,8 @@ namespace DesertSoftware.Solutions.IO
 
             // simplistic parser
             // shortcomings of this implementation; quoted commas are not ignored
-//            string[] values = line.Split(",".ToArray(), StringSplitOptions.None); //.RemoveEmptyEntries);
-            string[] values = line.EnumerateCsvValues().ToArray(); 
+            //            string[] values = line.Split(",".ToArray(), StringSplitOptions.None); //.RemoveEmptyEntries);
+            string[] values = line.EnumerateCsvValues().ToArray();
 
             var result = new ExpandoObject();
             var resultProperties = result as IDictionary<string, object>;
@@ -211,7 +211,7 @@ namespace DesertSoftware.Solutions.IO
         /// Reads all lines.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<dynamic> ReadAllLines( bool detectDateTimeValues = true) {
+        public IEnumerable<dynamic> ReadAllLines(bool detectDateTimeValues = true) {
             dynamic line;
 
             while ((line = ReadLine(detectDateTimeValues)) != null)
@@ -256,9 +256,9 @@ namespace DesertSoftware.Solutions.IO
         /// <exception cref="System.ArgumentOutOfRangeException">index;Index value must be in the range of 0 to number of columns.</exception>
         public dynamic ColumnValue(dynamic values, int index) {
             if (values == null) throw new ArgumentNullException("values");
-            if (index < 0 || (this.header != null && index >= this.header.Length)) 
+            if (index < 0 || (this.header != null && index >= this.header.Length))
                 throw new ArgumentOutOfRangeException("index", "Index value must be in the range of 0 to number of columns.");
-            
+
             IDictionary<string, dynamic> dictionary = values as IDictionary<string, dynamic>;
 
             if (dictionary == null) {
@@ -314,12 +314,20 @@ namespace DesertSoftware.Solutions.IO
             return strings;
         }
 
+        static internal string Right(this string s, int length) {
+            return (s ?? "").Substring(Math.Max(s.Length - length, 0), Math.Min(length, s.Length));
+        }
+
+        static internal string Left(this string s, int length) {
+            return (s ?? "").Substring(0, Math.Min(length, s.Length));
+        }
+
         /// <summary>
         /// Determines a value type suitable to contain the specified string value.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        static internal dynamic TypedValue(this string value, bool includeDateTime = true) {
+        static internal dynamic TypedValue(this string value, bool detectDateTime = true) {
             // attempt to determine the basic value type
             int intValue = 0;
             double doubleValue = 0;
@@ -327,25 +335,29 @@ namespace DesertSoftware.Solutions.IO
             float floatValue = 0;
             DateTime datetimeValue = DateTime.MinValue;
 
-            // integers
             if (int.TryParse(value, out intValue))
                 return intValue;
 
-            // doubles
             if (double.TryParse(value, out doubleValue))
                 return doubleValue;
 
-            // decimals
             if (decimal.TryParse(value, out decimalValue))
                 return decimalValue;
 
-            // floats
             if (float.TryParse(value, out floatValue))
                 return floatValue;
 
-            // datetimes
-            if (includeDateTime && DateTime.TryParse(value, out datetimeValue))
-                return datetimeValue;
+            // dd-MMM-yyyy
+            if (detectDateTime) {
+                if (DateTime.TryParse(value.Replace("-", " "), out datetimeValue))
+                    return datetimeValue;
+
+                string[] tokens = value.Split("-".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                if (tokens.Length > 2 &&
+                    DateTime.TryParse(("0" + tokens[0]).Right(2) + " " + tokens[1] + " " + ("20" + tokens[2]).Right(4), out datetimeValue))
+                    return datetimeValue;
+            }
 
             return value.Trim().Trim('"');  // trim whitespace and then trim leading/trailing quotes
         }
@@ -374,7 +386,7 @@ namespace DesertSoftware.Solutions.IO
             delimiters = delimiters.Length > 0 ? delimiters : new char[] { ',' };
 
             // start of a new value begins with a delimiter, so append one for the parser to mark end of line.
-            s = string.Format("{0}{1}", s, delimiters.Length > 0 ? delimiters[0] : ','); 
+            s = string.Format("{0}{1}", s, delimiters.Length > 0 ? delimiters[0] : ',');
 
             // scanner: scan the line looking for delimiters and quotes. everything else is a value character
             foreach (var character in s.Select((val, index) => new { val, index })) {

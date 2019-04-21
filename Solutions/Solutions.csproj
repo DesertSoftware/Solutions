@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DesertSoftware.Solutions</RootNamespace>
-    <AssemblyName>Solutions</AssemblyName>
+    <AssemblyName>DSSolutions</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -42,6 +42,7 @@
     <None Include="Data\DataSource.cs" />
     <Compile Include="Anonymous\Loggers.cs" />
     <Compile Include="Data\Generic\ListDataReader.cs" />
+    <Compile Include="Dynamix\Extensions\ValueBagExtensions.cs" />
     <Compile Include="Dynamix\ValueBag.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />

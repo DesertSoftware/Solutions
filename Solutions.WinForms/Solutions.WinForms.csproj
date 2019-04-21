@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DesertSoftware.Solutions.WinForms</RootNamespace>
-    <AssemblyName>Solutions.WinForms</AssemblyName>
+    <AssemblyName>DSSolutions.WinForms</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

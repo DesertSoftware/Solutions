@@ -286,5 +286,29 @@ namespace DesertSoftware.Solutions.Extensions
 
             return TypedValue(element.Value);
         }
+
+        /// <summary>
+        /// Returns the first named element found in the specified element.
+        /// Search is performed in named order.
+        /// </summary>
+        /// <param name="element">The element to search in.</param>
+        /// <param name="name">The name(s) to search for.</param>
+        /// <returns></returns>
+        static public XElement Element(this XElement element, params string[] name) {
+            return element.Elements()
+                .Where((x) => x.Name.LocalName.IsIn(name))
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the named elements found in the specified element.
+        /// </summary>
+        /// <param name="element">The element to search in.</param>
+        /// <param name="name">The name(s) to search for.</param>
+        /// <returns></returns>
+        static public IEnumerable<XElement> Elements(this XElement element, params string[] name) {
+            return element.Elements()
+                .Where((x) => x.Name.LocalName.IsIn(name));
+        }
     }
 }

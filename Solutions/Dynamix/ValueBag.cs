@@ -64,7 +64,9 @@ namespace DesertSoftware.Solutions.Dynamix
                 foreach (var property in d.GetType().GetProperties())
                     try {
                         dictionary[property.Name] = property.GetValue(d, null);
-                    } catch { }
+                    } catch { 
+                        // eat any exceptions raised
+                    }
             }
 
             return dictionary;
@@ -97,11 +99,11 @@ namespace DesertSoftware.Solutions.Dynamix
                             .Select((kv) => { return fields[index].Contains("[") ? kv.Value[IndexNumber(fields[index])] : kv.Value; })
                             .FirstOrDefault());
                     } catch (ArgumentOutOfRangeException) {
+                        // Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
                         return null;
-                        //                            Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
                     } catch (Exception) {
+                        // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
                         return null;
-                        //                            Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
                     }
 
             if (values == null)
@@ -117,13 +119,32 @@ namespace DesertSoftware.Solutions.Dynamix
                     .FirstOrDefault();
 
             } catch (ArgumentOutOfRangeException) {
-                //                    Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
+                // Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
             } catch (Exception) {
-                //                    Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
+                // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
             }
 
             return null;
+        }
 
+        /// <summary>
+        /// Gets the type of the source.
+        /// </summary>
+        /// <value>
+        /// The type of the source.
+        /// </value>
+        public Type SourceType {
+            get {  return this.source.GetType(); }
+        }
+
+        /// <summary>
+        /// Gets the name of the source type.
+        /// </summary>
+        /// <value>
+        /// The name of the source type.
+        /// </value>
+        public string SourceTypeName {
+            get { return this.source.GetType().Name; }
         }
 
         /// <summary>
@@ -208,11 +229,11 @@ namespace DesertSoftware.Solutions.Dynamix
                             .Select((kv) => { return fields[index].Contains("[") ? kv.Value[IndexNumber(fields[index])] : kv.Value; })
                             .FirstOrDefault());
                     } catch (ArgumentOutOfRangeException) {
+                        // Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
                         return null;
-                        //                            Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
                     } catch (Exception) {
+                        // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
                         return null;
-                        //                            Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
                     }
 
             if (values == null)
@@ -228,9 +249,9 @@ namespace DesertSoftware.Solutions.Dynamix
                     .FirstOrDefault();
 
             } catch (ArgumentOutOfRangeException) {
-                //                    Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
+                // Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
             } catch (Exception) {
-                //                    Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
+                // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
             }
 
             return null;
@@ -267,10 +288,10 @@ namespace DesertSoftware.Solutions.Dynamix
                         values = newValues;
                     } catch (ArgumentOutOfRangeException) {
                         values = null;
-                        //                            Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
+                        // Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
                     } catch (Exception) {
                         values = null;
-                        //                            Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
+                        // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
                     }
 
             if (values == null) return;
@@ -302,9 +323,9 @@ namespace DesertSoftware.Solutions.Dynamix
                 }
 
             } catch (ArgumentOutOfRangeException) {
-                //                    Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
+                // Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
             } catch (Exception) {
-                //                    Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
+                // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
             }
         }
 
@@ -334,11 +355,11 @@ namespace DesertSoftware.Solutions.Dynamix
 
                         values = newValues;
                     } catch (ArgumentOutOfRangeException) {
+                        // Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
                         values = null;
-                        //                            Console.WriteLine("Warning: '{0}' is outside the range of available items.", fields[index]);
                     } catch (Exception) {
+                        // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
                         values = null;
-                        //                            Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'", fields[index], ex.Message);
                     }
 
             if (values == null) return;
@@ -357,9 +378,9 @@ namespace DesertSoftware.Solutions.Dynamix
                     values[fields[index]] = value;
 
             } catch (ArgumentOutOfRangeException) {
-                //                    Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
+                // Console.WriteLine("Warning: index '{0}' is outside the range of available items in '{1}'. Expression '{2}' ignored.", IndexNumber(fields[index]), fields[index], expression);
             } catch (Exception) {
-                //                    Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
+                // Console.WriteLine("Warning: referencing '{0}' generated the following error. '{1}'. Expression '2' ignored.", fields[index], ex.Message, expression);
             }
         }
     }
