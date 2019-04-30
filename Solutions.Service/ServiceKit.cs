@@ -1,5 +1,5 @@
 ﻿//
-//  Copyright 2015, Desert Software Solutions Inc.
+//  Copyright 2015, 2019 Desert Software Solutions Inc.
 //    ServiceKit.cs: https://gist.github.com/rostreim/47e63f01fbaf8556b847
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration.Install;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
@@ -45,8 +46,8 @@ public class ServiceFactory
 
         if (svcConfigurator.ConsoleGreeting == null)
             svcConfigurator.ConsoleGreeting = () => {
-                Console.WriteLine("{0} service {1}", Setup.serviceInstaller.DisplayName, typeof(T).ToVersionString());
-                Console.WriteLine(GREETING); //"A Desert Software solution <http://desertsoftware.com>");
+                Console.WriteLine("{0} service {1}", Setup.serviceInstaller.DisplayName, typeof(T).ProductVersion());
+                Console.WriteLine(GREETING);
             };
 
         // now parse the command line
@@ -57,8 +58,8 @@ public class ServiceFactory
 
         // attempt to log an informational message to ensure logging is configured properly
         if (svcConfigurator.ServiceGreeting == null) {
-            logger.Info("{1} service {0}", typeof(T).ToVersionString(), Setup.serviceInstaller.DisplayName);
-            logger.Info(GREETING); //"A Desert Software solution <http://www.desertsoftware.com>");
+            logger.Info("{1} service {0}", typeof(T).ProductVersion(), Setup.serviceInstaller.DisplayName);
+            logger.Info(GREETING);
         } else
             svcConfigurator.ServiceGreeting();
 
@@ -80,6 +81,12 @@ public class ServiceFactory
                 ServiceBase.Run(svcConfigurator.ServiceInstance);
         } catch (Exception ex) {
             logger.Fatal(ex);
+            if (!state.RunAsService) {
+                Console.WriteLine("Service is stopped. Press enter to exit ... ");
+                Console.WriteLine();
+                Console.ReadLine();
+            }
+
             return -1;
         }
 
@@ -306,6 +313,22 @@ public class ServiceFactory
 
                         case 'i':   // install      /i:"Name of this service"
                             if (!Privileges.HaveAdministratorPrivileges()) {
+                                if (System.Environment.OSVersion.Version.Major >= 6) {
+                                    Process p = new Process();
+                                    p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                                    p.StartInfo.FileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+//                                    p.StartInfo.FileName = System.Reflection.Assembly.GetExecutingAssembly().Location; // Application.ExecutablePath;
+                                    p.StartInfo.Arguments = string.Join(" ", args);
+                                    p.StartInfo.UseShellExecute = true;
+                                    p.StartInfo.RedirectStandardOutput = false;
+                                    p.StartInfo.RedirectStandardError = false;
+                                    p.StartInfo.Verb = "runas";
+
+                                    p.Start();
+                                    p.WaitForExit();
+                                    return RunState.ExitNow;
+                                }
+
                                 Console.Error.WriteLine("Access Denied. Administrator permissions are needed.");
                                 Console.Error.WriteLine("Use 'run as administrator' to install this service.");
                                 return RunState.ExitNow;
@@ -324,10 +347,28 @@ public class ServiceFactory
                             } catch (Exception ex) {
                                 logger.Fatal(ex.Message);
                             }
+
                             return RunState.ExitNow;
 
                         case 'u':   // uninstall    /u:"Name of this service"
                             if (!Privileges.HaveAdministratorPrivileges()) {
+                                if (System.Environment.OSVersion.Version.Major >= 6) {
+                                    Process p = new Process();
+                                    p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                                    // AppDomain.CurrentDomain.ApplicationIdentity.FullName
+                                    p.StartInfo.FileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+//                                    p.StartInfo.FileName = System.Reflection.Assembly.GetExecutingAssembly().Location; // Application.ExecutablePath;
+                                    p.StartInfo.Arguments = string.Join(" ", args);
+                                    p.StartInfo.UseShellExecute = true;
+                                    p.StartInfo.RedirectStandardOutput = false;
+                                    p.StartInfo.RedirectStandardError = false;
+                                    p.StartInfo.Verb = "runas";
+
+                                    p.Start();
+                                    p.WaitForExit();
+                                    return RunState.ExitNow;
+                                }
+
                                 Console.Error.WriteLine("Access Denied. Administrator permissions are needed.");
                                 Console.Error.WriteLine("Use 'run as administrator' to uninstall this service.");
                                 return RunState.ExitNow;
@@ -422,7 +463,8 @@ static public class TypeExtensions
     /// <param name="type">The type to retrieve the version for.</param>
     /// <returns></returns>
     static public string ToVersionString(this Type type) {
-        return ToVersionString(type, (v) => { return string.Format("{0}.{1} (build {2})", v.Major, v.Minor, v.Build); });
+        // return ToVersionString(type, (v) => { return string.Format("{0}.{1} (build {2})", v.Major, v.Minor, v.Build); });
+        return ToVersionString(type, (v) => { return string.Format("{0}.{1} (build {2}.{3:0###})", v.Major, v.Minor, v.Build, v.Revision); });
     }
 
     /// <summary>
@@ -438,5 +480,23 @@ static public class TypeExtensions
             return formatter(new Version("0.0.0.0"));
 
         return formatter(assembly.GetName().Version ?? new Version("0.0.0.0"));
+    }
+
+    /// <summary>
+    /// Returns the informational version (Product Version) string attribute value for a specified type.
+    /// </summary>
+    /// <param name="type">The type to retrieve the informational version for.</param>
+    /// <returns></returns>
+    static public string ProductVersion(this Type type) {
+        System.Reflection.Assembly assembly = type != null ? System.Reflection.Assembly.GetAssembly(type) : null;
+
+        if (assembly == null)
+            return type.ToVersionString();
+
+        var versionInfo = assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false) as AssemblyInformationalVersionAttribute[];
+
+        return versionInfo.Length > 0
+            ? versionInfo[0].InformationalVersion
+            : type.ToVersionString();
     }
 }

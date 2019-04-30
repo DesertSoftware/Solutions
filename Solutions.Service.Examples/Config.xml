@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<service xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" frequency="every 10 seconds" runOnStartup="true">
+  <!-- 
+    - populate this space with additional settings specific to the service
+    - for example:
+    - <connection>
+    -   <server>Enter SQL server name\Enter SQL server instance</server>
+    -   <database>Enter database name</database>
+    -   <authentication>SQL Server Authentication</authentication>
+    -   <login>SQL login</login>
+    -   <password>Password</password>
+    - </connection>
+    -->
+</service>

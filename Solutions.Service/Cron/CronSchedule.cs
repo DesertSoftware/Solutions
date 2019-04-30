@@ -134,6 +134,7 @@ namespace DesertSoftware.Solutions.Service.Cron
         /// <param name="schedule">The schedule.</param>
         /// <returns></returns>
         static public string Parse(string schedule) {
+            const string EVERY_SECOND = "<* * * * * *";
             const string HOURLY = "0 * * * *";
             const string EVERY_MINUTE = "* * * * *";
             const string DAILY = "0 0 * * *";
@@ -169,6 +170,7 @@ namespace DesertSoftware.Solutions.Service.Cron
                 word = words.Length > 1 ? words[1].Trim() : "";
 
                 switch (word) {
+                    case "second": return EVERY_SECOND;
                     case "minute": return EVERY_MINUTE;
                     case "hour": return HOURLY;
                     case "day": return ParseEveryDay(schedule, words);
@@ -206,6 +208,9 @@ namespace DesertSoftware.Solutions.Service.Cron
 
                 if (word.StartsWith("minute"))
                     return string.Format("*/{0} * * * *", increment);
+
+                if (word.StartsWith("second"))
+                    return string.Format("<*/{0} * * * * *", increment);
             }
 
             if (word.StartsWith("month")) {
@@ -230,6 +235,13 @@ namespace DesertSoftware.Solutions.Service.Cron
             return schedule;
         }
 
+        static public CrontabSchedule ToCrontabSchedule(string schedule) {
+            if ((schedule ?? "").StartsWith("<")) 
+                return CrontabSchedule.Parse(schedule.TrimStart('<'), new CrontabSchedule.ParseOptions() { IncludingSeconds = true });
+
+            return CrontabSchedule.Parse(schedule);
+        }
+
         /// <summary>
         /// Gets the next scheduled occurrence from the specified start time.
         /// </summary>
@@ -237,7 +249,8 @@ namespace DesertSoftware.Solutions.Service.Cron
         /// <param name="start">The start date time.</param>
         /// <returns></returns>
         static public DateTime GetNextOccurrence(string schedule, DateTime start) {
-            return CrontabSchedule.Parse(CronSchedule.Parse(schedule)).GetNextOccurrence(start);
+//            return CrontabSchedule.Parse(CronSchedule.Parse(schedule)).GetNextOccurrence(start);
+            return ToCrontabSchedule(CronSchedule.Parse(schedule)).GetNextOccurrence(start);
         }
 
         /// <summary>
@@ -248,7 +261,8 @@ namespace DesertSoftware.Solutions.Service.Cron
         /// <param name="end">The end date time.</param>
         /// <returns></returns>
         static public DateTime GetNextOccurrence(string schedule, DateTime start, DateTime end) {
-            return CrontabSchedule.Parse(CronSchedule.Parse(schedule)).GetNextOccurrence(start, end);
+//            return CrontabSchedule.Parse(CronSchedule.Parse(schedule)).GetNextOccurrence(start, end);
+            return ToCrontabSchedule(CronSchedule.Parse(schedule)).GetNextOccurrence(start, end);
         }
 
         /// <summary>
@@ -259,7 +273,8 @@ namespace DesertSoftware.Solutions.Service.Cron
         /// <param name="end">The end date time.</param>
         /// <returns></returns>
         static public DateTime[] GetOccurrences(string schedule, DateTime start, DateTime end) {
-            return CrontabSchedule.Parse(CronSchedule.Parse(schedule)).GetNextOccurrences(start, end).ToArray();
+//            return CrontabSchedule.Parse(CronSchedule.Parse(schedule)).GetNextOccurrences(start, end).ToArray();
+            return ToCrontabSchedule(CronSchedule.Parse(schedule)).GetNextOccurrences(start, end).ToArray();
         }
     }
 }

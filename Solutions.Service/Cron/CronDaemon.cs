@@ -84,7 +84,7 @@ namespace DesertSoftware.Solutions.Service.Cron
             if (repeatCount == 0) repeatCount = 1;
 
             var cancellation = new CancellationTokenSource();
-            var crontab = CrontabSchedule.Parse(cronExpression);
+            var crontab = CronSchedule.ToCrontabSchedule(cronExpression);
 
             Func<DateTime, DateTime?> schedule = time => {
                 if (cancellation.IsCancellationRequested)
