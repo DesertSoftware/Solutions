@@ -166,7 +166,10 @@ namespace DesertSoftware.Solutions.Service.Cron
                 return ParseEveryDay(schedule, dailyWords);
             }
 
-            if (word.StartsWith("every")) {
+            // every 5 minutes
+            // in 10 seconds
+            // after 1 hour
+            if (word.StartsWith("every") || word.StartsWith("in") || word.StartsWith("after")) {
                 word = words.Length > 1 ? words[1].Trim() : "";
 
                 switch (word) {
