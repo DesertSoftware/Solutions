@@ -32,6 +32,30 @@ namespace DesertSoftware.Solutions.IO
         private TextReader reader;
         private string[] header;
 
+        class Options
+        {
+            // determines if the detectdatetime option is present in the specified array of options
+            static public bool DetectDateTime(params string[] options) {
+                foreach (var option in options)
+                    if (option.Trim() == "detectdatetime")
+                        return true;
+
+                return false;
+            }
+
+            // determines if the detectdatetime option is present in the specified comma seperated options string
+            static public bool DetectDateTime(string options) {
+                // options is represented as a comma seperated list of content specific options
+                return DetectDateTime((options ?? "").ToLower().Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+            }
+        }
+
+        public class CsvValue
+        {
+            public bool IsQuoted { get; set; }
+            public string Value { get; set; }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvReader" /> class.
         /// </summary>
@@ -184,10 +208,8 @@ namespace DesertSoftware.Solutions.IO
             if (line == null)
                 return null;    // end of file
 
-            // simplistic parser
-            // shortcomings of this implementation; quoted commas are not ignored
-            //            string[] values = line.Split(",".ToArray(), StringSplitOptions.None); //.RemoveEmptyEntries);
-            string[] values = line.EnumerateCsvValues().ToArray();
+            // parse the line into an array of values
+            CsvValue[] values = line.EnumerateCsvValues().ToArray();
 
             var result = new ExpandoObject();
             var resultProperties = result as IDictionary<string, object>;
@@ -229,6 +251,15 @@ namespace DesertSoftware.Solutions.IO
             while ((line = ReadLine(detectDateTimeValues)) != null)
                 if (selector(line))
                     yield return line;
+        }
+
+        /// <summary>
+        /// Reads all lines.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
+        public IEnumerable<dynamic> ReadAllLines(string options) {
+            return ReadAllLines(Options.DetectDateTime(options));
         }
 
         /// <summary>
@@ -323,6 +354,20 @@ namespace DesertSoftware.Solutions.IO
         }
 
         /// <summary>
+        /// Determines a value type suitable to represent the specified string value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="detectDateTime">if set to <c>true</c> [detect date time].</param>
+        /// <returns></returns>
+        static internal dynamic TypedValue(this CsvReader.CsvValue value, bool detectDateTime = true) {
+            // treat quoted values as literal string
+            if (value.IsQuoted) 
+                return value.Value;
+
+            return TypedValue(value.Value, detectDateTime);
+        }
+
+        /// <summary>
         /// Determines a value type suitable to contain the specified string value.
         /// </summary>
         /// <param name="value">The value.</param>
@@ -376,9 +421,10 @@ namespace DesertSoftware.Solutions.IO
         /// <param name="s">The string to enumerate from.</param>
         /// <param name="delimiters">One or more characters that delimit a value. (default ',')</param>
         /// <returns></returns>
-        static internal IEnumerable<string> EnumerateCsvValues(this string s, params char[] delimiters) {
+        static internal IEnumerable<CsvReader.CsvValue> EnumerateCsvValues(this string s, params char[] delimiters) {
 
             var inQuote = false;
+            var isQuoted = false;
             var escapedQuote = false;
             var value = new StringBuilder();
 
@@ -397,8 +443,9 @@ namespace DesertSoftware.Solutions.IO
                     // Determine if we are in quotes or not. If not in quotes, return the characters scanned up to this point.
 
                     if (!inQuote) {
-                        yield return value.ToString().Trim();
+                        yield return new CsvReader.CsvValue() { IsQuoted = isQuoted, Value = value.ToString().Trim() };
                         value.Clear();
+                        isQuoted = false;
                     } else
                         value.Append(character.val);
 
@@ -424,6 +471,7 @@ namespace DesertSoftware.Solutions.IO
                             } else {
                                 if (!inQuote) {
                                     inQuote = true;
+                                    isQuoted = true;
                                 } else {
                                     value.Append(character.val); //...It's a quote inside a quote.
                                 }

@@ -409,5 +409,27 @@ namespace DesertSoftware.Solutions.Extensions
         static public string Format(this string s, params object[] args) {
             return string.Format(s, args);
         }
+
+        /// <summary>
+        /// Returns the specified number of characters from the end of the string.
+        /// The entire string is returned if the length parameter is larger than the length of the string.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        static public string Right(this string s, int length) {
+            return (s ?? "").Substring(Math.Max(s.Length - length, 0), Math.Min(length, s.Length));
+        }
+
+        /// <summary>
+        /// Returns the specified number of characters from the beginning of the string.
+        /// The entire string is returned if the length parameter is larger than the length of the string.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        static public string Left(this string s, int length) {
+            return (s ?? "").Substring(0, Math.Min(length, s.Length));
+        }
     }
 }
