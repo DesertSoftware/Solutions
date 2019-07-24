@@ -1,7 +1,7 @@
 ﻿//
-//  Copyright 2012, Desert Software Solutions Inc.
+//  Copyright 2012, 2019 Desert Software Solutions Inc.
 //    CsvReader.cs: 
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/IO/CsvReader.cs
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -198,12 +198,79 @@ namespace DesertSoftware.Solutions.IO
                 } catch { }
         }
 
+        public string[] Columns {
+            get { return this.header; }
+        }
+
+        // read next fully quoted line from the reader. The number of physical lines
+        // may be more than one since it is possible we may encounter a crlf within
+        // a quoted column value. The final result is one string of text.
+        private string ReadLine() {
+            bool done = false;
+            bool inQuote = false;
+            bool escapedQuote = false;
+            string line = this.reader.ReadLine();
+            List<string> lines = new List<string>();
+
+            if (line == null)
+                return null;
+
+            lines.Add(line);
+
+            while (!done) {
+                foreach (var character in line.Select((val, index) => new { val, index })) {
+                    if (character.val == '"') {
+                        //If we've hit a quote character...
+
+                        if (character.val == '"' && inQuote) {
+                            // Does it appear to be a closing quote?
+                            // """ ensure we don't attempt to index beyond the length of the line
+                            if (line[Math.Min(character.index + 1, line.Length - 1)] == character.val && character.index + 1 < line.Length && !escapedQuote) {
+                                // If the character afterwards is also a quote, this is to escape that (not a closing quote).
+                                // Flag that we are escaped for the next character. Don't add the escaping quote.
+                                escapedQuote = true;
+                            } else
+                                if (escapedQuote) {
+                                    //This is an escaped quote. Add it and revert quoteIsEscaped to false.
+                                    escapedQuote = false;
+                                } else {
+                                    inQuote = false;
+                                }
+                        } else {
+                            if (!inQuote) {
+                                inQuote = true;
+                            } else {
+                                // value.Append(character.val); //...It's a quote inside a quote.
+                            }
+                        }
+                    }
+                    // This, is a, "test"", followed, "some crlf line breakes in a line"
+                }
+
+                done = !inQuote;
+                // are we in a quote? if so,
+                // do we need to combine the next line with this line? (done will be false)
+                if (!done) {
+                    line = this.reader.ReadLine();
+
+                    // file ended early??
+                    if (line == null)
+                        done = true;
+
+                    if (!done)
+                        lines.Add(line);
+                }
+            }
+
+            return string.Join("\n", lines.ToArray());
+        }
+
         /// <summary>
         /// Reads the next line and returns an object consisting of the values contained in the line.
         /// </summary>
         /// <returns></returns>
         public dynamic ReadLine(bool detectDateTimeValues = true) {
-            string line = this.reader.ReadLine();
+            string line = ReadLine();
 
             if (line == null)
                 return null;    // end of file

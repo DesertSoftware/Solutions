@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Solutions.Service.Examples.Properties {
+namespace DesertSoftware.Solutions.Service.Examples.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Solutions.Service.Examples.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Solutions.Service.Examples.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DesertSoftware.Solutions.Service.Examples.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,8 +61,16 @@ namespace Solutions.Service.Examples.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt; 
-        ///.
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;service xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; frequency=&quot;every 10 seconds&quot; runOnStartup=&quot;true&quot;&gt;
+        ///  &lt;!-- 
+        ///    - populate this space with additional settings specific to the service
+        ///    - for example:
+        ///    - &lt;connection&gt;
+        ///    -   &lt;server&gt;Enter SQL server name\Enter SQL server instance&lt;/server&gt;
+        ///    -   &lt;database&gt;Enter database name&lt;/database&gt;
+        ///    -   &lt;authentication&gt;SQL Server Authentication&lt;/authentication&gt;
+        ///    -   &lt;logi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Config {
             get {

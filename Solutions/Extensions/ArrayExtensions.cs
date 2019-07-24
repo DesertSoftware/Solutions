@@ -1,7 +1,7 @@
 ﻿//
-//  Copyright 2013-2019, Desert Software Solutions Inc.
+//  Copyright 2013, 2019 Desert Software Solutions Inc.
 //    ArrayExtensions.cs:
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Extensions/ArrayExtensions.cs
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.

@@ -1,7 +1,7 @@
 ﻿//
-//  Copyright 2015, Desert Software Solutions Inc.
+//  Copyright 2015, 2019 Desert Software Solutions Inc.
 //    CronDaemon.cs: 
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Security/MD5Checksum.cs
+//      https://github.com/DesertSoftware/Solutions
 //      adapted from https://github.com/sergeyt/CronDaemon
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");

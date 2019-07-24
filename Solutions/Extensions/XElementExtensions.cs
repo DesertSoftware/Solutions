@@ -1,7 +1,7 @@
 ﻿//
-//  Copyright 2014, Desert Software Solutions Inc.
+//  Copyright 2014, 2019 Desert Software Solutions Inc.
 //    XElementExtensions.cs:
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Extensions/XElementExtensions.cs
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -144,68 +144,150 @@ namespace DesertSoftware.Solutions.Extensions
             return true;
         }
 
-
+        /// <summary>
+        /// Adds the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public void Add(string key, dynamic value) {
             throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Determines whether the <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key.
+        /// </summary>
+        /// <param name="key">The key to locate in the <see cref="T:System.Collections.Generic.IDictionary`2" />.</param>
+        /// <returns>
+        /// true if the <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the key; otherwise, false.
+        /// </returns>
         public bool ContainsKey(string key) {
             return LoadAllProperties().ContainsKey(key);
         }
 
+        /// <summary>
+        /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the keys of the <see cref="T:System.Collections.Generic.IDictionary`2" />.
+        /// </summary>
         public ICollection<string> Keys {
             get { return LoadAllProperties().Keys; }
         }
 
+        /// <summary>
+        /// Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" />.
+        /// </summary>
+        /// <param name="key">The key of the element to remove.</param>
+        /// <returns>
+        /// true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key" /> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2" />.
+        /// </returns>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public bool Remove(string key) {
             throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Tries the get value.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public bool TryGetValue(string key, out dynamic value) {
             return LoadAllProperties().TryGetValue(key, out value);
         }
 
+        /// <summary>
+        /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the values in the <see cref="T:System.Collections.Generic.IDictionary`2" />.
+        /// </summary>
         public ICollection<dynamic> Values {
             get { return LoadAllProperties().Values; }
         }
 
+        /// <summary>
+        /// Gets or sets the element with the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public dynamic this[string key] {
             get { return this.LoadAllProperties()[key]; }
             set { throw new InvalidOperationException(); }
         }
 
+        /// <summary>
+        /// Adds the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public void Add(KeyValuePair<string, dynamic> item) {
             throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1" />.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public void Clear() {
             throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Determines whether [contains] [the specified item].
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>
+        ///   <c>true</c> if [contains] [the specified item]; otherwise, <c>false</c>.
+        /// </returns>
         public bool Contains(KeyValuePair<string, dynamic> item) {
             return LoadAllProperties().Contains(item);
         }
 
+        /// <summary>
+        /// Copies to the specified array.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <param name="arrayIndex">Index of the array.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
         public void CopyTo(KeyValuePair<string, dynamic>[] array, int arrayIndex) {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
+        /// </summary>
         public int Count {
             get { return LoadAllProperties().Count; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
+        /// </summary>
         public bool IsReadOnly {
             get { return true; }
         }
 
+        /// <summary>
+        /// Removes the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException"></exception>
         public bool Remove(KeyValuePair<string, dynamic> item) {
             throw new InvalidOperationException();
         }
 
+        /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<KeyValuePair<string, dynamic>> GetEnumerator() {
             return LoadAllProperties().GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+        /// </returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
             return LoadAllProperties().GetEnumerator();
         }
@@ -213,6 +295,11 @@ namespace DesertSoftware.Solutions.Extensions
 
     static public class XElementExtensions
     {
+        /// <summary>
+        /// Attempts to return a typed value of the specified string.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         static public dynamic TypedValue(string value) {
             // attempt to determine the basic value type
             int intValue = 0;

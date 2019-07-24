@@ -1,8 +1,7 @@
 ﻿//
-//  Copyright 2015, Desert Software Solutions Inc.
+//  Copyright 2015, 2019 Desert Software Solutions Inc.
 //    CronSchedule.cs: 
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Service/Cron/CronSchedule.cs
-//      adapted from https://github.com/sergeyt/CronDaemon
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.

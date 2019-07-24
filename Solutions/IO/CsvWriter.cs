@@ -1,7 +1,7 @@
 ﻿//
 //  Copyright 2012, Desert Software Solutions Inc.
 //    CsvReader.cs: 
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/IO/CsvWriter.cs
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.

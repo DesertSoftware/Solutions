@@ -1,7 +1,7 @@
 ﻿//
-//  Copyright 2015, Desert Software Solutions Inc.
+//  Copyright 2015, 2019 Desert Software Solutions Inc.
 //    MessageDialog.cs:
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/WinForms/MessageDialog.cs
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -28,6 +28,10 @@ using System.Windows.Forms;
 
 namespace DesertSoftware.Solutions.WinForms
 {
+    /// <summary>
+    /// Provides a basic Message Dialog box implementation
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
     public partial class MessageDialog : Form
     {
         private Panel headerPanel = new Panel();
@@ -92,9 +96,6 @@ namespace DesertSoftware.Solutions.WinForms
             this.Shown += this.MessageDialog_Shown;
         }
 
-//        MessageBox.Show("the message", "caption", MessageBoxButtons, MessageBoxIcon, MessageBoxDefaultButton, MessageBoxOptions, displayHelpButtonFalse, helpFilePath, HelpNavigator, objectparm);
-
-
         /// <summary>
         /// Displays a message dialog with the specified text.
         /// </summary>
@@ -155,6 +156,13 @@ namespace DesertSoftware.Solutions.WinForms
             }
         }
 
+        /// <summary>
+        /// Displays a message dialog with the specified text.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="caption">The caption.</param>
+        /// <param name="buttons">The buttons.</param>
+        /// <returns></returns>
         static public DialogResult Show(string text, string caption, MessageBoxButtons buttons) {
             using (var dlg = new MessageDialog()) {
                 dlg.Text = caption;
@@ -164,6 +172,14 @@ namespace DesertSoftware.Solutions.WinForms
             }
         }
 
+        /// <summary>
+        /// Displays a message dialog.
+        /// </summary>
+        /// <param name="owner">The owner.</param>
+        /// <param name="text">The text.</param>
+        /// <param name="caption">The caption.</param>
+        /// <param name="buttons">The buttons.</param>
+        /// <returns></returns>
         static public DialogResult Show(System.Windows.Forms.IWin32Window owner, string text, string caption, MessageBoxButtons buttons) {
             using (var dlg = new MessageDialog()) {
                 dlg.StartPosition = FormStartPosition.CenterParent;

@@ -1,7 +1,7 @@
 ﻿//
 //  Copyright 2015, Desert Software Solutions Inc.
 //    ReleaseMigrationAttribute.cs:
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Data/Migrations/ReleaseMigrationAttribute.cs
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -30,6 +30,16 @@ namespace DesertSoftware.Solutions.Data.Migrations
     /// </summary>
     public class ReleaseMigrationAttribute : MigrationAttribute
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReleaseMigrationAttribute"/> class.
+        /// </summary>
+        /// <param name="major">The major.</param>
+        /// <param name="minor">The minor.</param>
+        /// <param name="year">The year.</param>
+        /// <param name="month">The month.</param>
+        /// <param name="day">The day.</param>
+        /// <param name="build">The build.</param>
+        /// <param name="description">The description.</param>
         public ReleaseMigrationAttribute(int major, int minor, int year, int month, int day, int build = 0, string description = "")
             : base(ReleaseVersion(major, minor, year, month, day, build), ReleaseDescription(major, minor, year, month, day, build, description)) {
 

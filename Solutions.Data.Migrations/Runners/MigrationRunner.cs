@@ -1,7 +1,7 @@
 ﻿//
 //  Copyright 2015, Desert Software Solutions Inc.
 //    MigrationRunner.cs:
-//      https://github.com/DesertSoftware/Solutions/blob/master/Solutions/Data/Migrations/Runners/MigrationRunner.cs
+//      https://github.com/DesertSoftware/Solutions
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -32,14 +32,35 @@ namespace DesertSoftware.Solutions.Data.Migrations.Runners
 {
     public class MigrationRunner
     {
+        /// <summary>
+        /// Runs the specified target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="connection">The connection.</param>
+        /// <param name="database">The database.</param>
+        /// <param name="writer">The writer.</param>
         static public void Run(string target, string connection, string database = "SqlServer", TextWriter writer = null) {
             Run(new RunnerContext { Targets = new string[] { target }, Connection = connection, Database = database }, writer);
         }
 
+        /// <summary>
+        /// Rollbacks the specified target.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="connection">The connection.</param>
+        /// <param name="version">The version.</param>
+        /// <param name="task">The task.</param>
+        /// <param name="database">The database.</param>
+        /// <param name="writer">The writer.</param>
         static public void Rollback(string target, string connection, long version, string task = "migrate:down", string database = "SqlServer", TextWriter writer = null) {
             Run(new RunnerContext { Targets = new string[] { target }, Connection = connection, Database = database, Task = task, Version = version }, writer);
         }
 
+        /// <summary>
+        /// Runs the specified context.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="writer">The writer.</param>
         static public void Run(RunnerContext context, TextWriter writer = null) {
             if (writer == null)
                 writer = new StringWriter();
@@ -78,6 +99,7 @@ namespace DesertSoftware.Solutions.Data.Migrations.Runners
             }
         }
     }
+
     public class RunnerContext
     {
         public string Database { get; set; }
@@ -103,8 +125,17 @@ namespace DesertSoftware.Solutions.Data.Migrations.Runners
 
     public class DataWriter : FluentMigrator.Runner.Announcers.TextWriterAnnouncer
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataWriter"/> class.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
         public DataWriter(TextWriter writer) : base(writer) { }
 
+        /// <summary>
+        /// Writes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="escaped">if set to <c>true</c> [escaped].</param>
         public override void Write(string message, bool escaped) {
             base.Write(message, false);
         }

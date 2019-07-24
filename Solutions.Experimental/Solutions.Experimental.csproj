@@ -7,8 +7,8 @@
     <ProjectGuid>{294EF557-62E8-4E1F-A37B-D4520B86FB0D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Solutions.Experimental</RootNamespace>
-    <AssemblyName>Solutions.Experimental</AssemblyName>
+    <RootNamespace>DesertSoftware.Solutions.Experimental</RootNamespace>
+    <AssemblyName>DesertSoftware.Solutions.Experimental</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,7 +43,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Solutions.csproj">
+    <ProjectReference Include="..\Solutions\Solutions.csproj">
       <Project>{b23b7c67-a7f4-44ba-b94e-83e4fe6f71c1}</Project>
       <Name>Solutions</Name>
     </ProjectReference>
